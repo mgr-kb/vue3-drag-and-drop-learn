@@ -111,16 +111,25 @@ export default defineComponent({
     );
     // drag開始時のイベント処理
     const dragList = (event: DragEvent, taskId: string) => {
-      console.log(taskId);
-      event.dataTransfer!.effectAllowed = "move";
-      event.dataTransfer!.dropEffect = "move";
-      event.dataTransfer!.setData("list-id", taskId);
+      const dataTransfer = event?.dataTransfer;
+      if (!dataTransfer) {
+        return;
+      }
+      dataTransfer.effectAllowed = "move";
+      dataTransfer.dropEffect = "move";
+      dataTransfer.setData("list-id", taskId);
     };
     // drop時のイベント処理
     const dropList = (event: DragEvent, status: string) => {
-      const dragId = event.dataTransfer!.getData("list-id");
+      const dataTransfer = event?.dataTransfer;
+      if (!dataTransfer) {
+        return;
+      }
+      const dragId = dataTransfer.getData("list-id");
       const dragItem = data.find(item => item.id === dragId);
-      dragItem!.status = status;
+      if (dragItem != null) {
+        dragItem.status = status;
+      }
     };
     return {
       statusIsTodo,
