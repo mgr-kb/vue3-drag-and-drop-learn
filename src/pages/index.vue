@@ -7,6 +7,8 @@
         <div
           class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
           @drop="dropList($event, 'Todo')"
+          @dragover.prevent
+          @dragenter.prevent
         >
           <p>TODO</p>
           <!-- task container -->
@@ -26,6 +28,8 @@
         <div
           class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
           @drop="dropList($event, 'InProgress')"
+          @dragover.prevent
+          @dragenter.prevent
         >
           <p>In Progress</p>
           <!-- task container -->
@@ -45,6 +49,8 @@
         <div
           class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
           @drop="dropList($event, 'Done')"
+          @dragover.prevent
+          @dragenter.prevent
         >
           <p>Done</p>
           <!-- task container -->
@@ -120,7 +126,8 @@ export default defineComponent({
       statusIsTodo,
       statusIsProgress,
       statusIsDone,
-      dragList
+      dragList,
+      dropList
     };
   }
 });
