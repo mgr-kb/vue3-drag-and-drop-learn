@@ -1,5 +1,5 @@
 <template>
-  <Page msg="Welcome to Your Vue.js + TypeScript App" />
+  <Page />
 </template>
 
 <script lang="ts">

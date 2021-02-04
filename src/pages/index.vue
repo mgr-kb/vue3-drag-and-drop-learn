@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="text-indigo-500">{{ msg }}</h1>
+    <h1 class="text-indigo-500">Drag and Drop</h1>
     <div class="flex justify-center">
       <div class="min-h-screen flex overflow-x-scroll py-12">
         <!-- TODO -->
@@ -85,9 +85,6 @@ export default defineComponent({
   // components: {
   //   TaskColumn
   // },
-  props: {
-    msg: String
-  },
   setup() {
     const data = reactive([
       { id: "1", name: "TaskA", status: "Todo" },
