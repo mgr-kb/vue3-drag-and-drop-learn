@@ -1,92 +1,41 @@
 <template>
-  <div>
-    <h1 class="text-indigo-500">Drag and Drop</h1>
+  <main>
+    <h1 class="text-indigo-500">Vue 3 Drag and Drop</h1>
     <div class="flex justify-center">
       <div class="min-h-screen flex overflow-x-scroll py-12">
-        <!-- TODO -->
-        <div
-          class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
-          @drop="dropList($event, 'Todo')"
-          @dragover.prevent
-          @dragenter.prevent
-        >
-          <p>TODO</p>
-          <!-- task container -->
-          <ul>
-            <li
-              v-for="item in statusIsTodo"
-              :key="item.id"
-              class="mt-2 bg-blue-400"
-              draggable="true"
-              @dragstart="dragList($event, item.id)"
-            >
-              {{ item.name }}
-            </li>
-          </ul>
-        </div>
-        <!-- In Progress -->
-        <div
-          class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
-          @drop="dropList($event, 'InProgress')"
-          @dragover.prevent
-          @dragenter.prevent
-        >
-          <p>In Progress</p>
-          <!-- task container -->
-          <ul>
-            <li
-              v-for="item in statusIsProgress"
-              :key="item.id"
-              class="mt-2 bg-blue-400"
-              draggable="true"
-              @dragstart="dragList($event, item.id)"
-            >
-              {{ item.name }}
-            </li>
-          </ul>
-        </div>
-        <!-- Done -->
-        <div
-          class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
-          @drop="dropList($event, 'Done')"
-          @dragover.prevent
-          @dragenter.prevent
-        >
-          <p>Done</p>
-          <!-- task container -->
-          <ul>
-            <li
-              v-for="item in statusIsDone"
-              :key="item.id"
-              class="mt-2 bg-blue-400"
-              draggable="true"
-              @dragstart="dragList($event, item.id)"
-            >
-              {{ item.name }}
-            </li>
-          </ul>
-        </div>
-        <!-- <TaskColumn title="Todo" />
-        <TaskColumn title="In Progress" />
-        <TaskColumn title="Done" /> -->
+        <TaskColumn
+          columnType="Todo"
+          :statusByTodos="statusIsTodo"
+          @dropList="dropList"
+        />
+        <TaskColumn
+          columnType="InProgress"
+          :statusByTodos="statusIsProgress"
+          @dropList="dropList"
+        />
+        <TaskColumn
+          columnType="Done"
+          :statusByTodos="statusIsDone"
+          @dropList="dropList"
+        />
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive, computed } from "vue";
-// import TaskColumn from "@/components/TaskColumn.vue";
+import TaskColumn from "@/components/TaskColumn.vue";
 
 /**
  * dataTransferなど、nullableな値も必ずあると仮定
  */
 export default defineComponent({
-  // components: {
-  //   TaskColumn
-  // },
+  components: {
+    TaskColumn
+  },
   setup() {
-    const data = reactive([
+    const data = reactive<Item[]>([
       { id: "1", name: "TaskA", status: "Todo" },
       { id: "2", name: "TaskB", status: "InProgress" },
       { id: "3", name: "TaskC", status: "Done" },
@@ -117,12 +66,9 @@ export default defineComponent({
       dataTransfer.setData("list-id", taskId);
     };
     // drop時のイベント処理
-    const dropList = (event: DragEvent, status: string) => {
-      const dataTransfer = event?.dataTransfer;
-      if (!dataTransfer) {
-        return;
-      }
-      const dragId = dataTransfer.getData("list-id");
+    const dropList = (...args: [string, string]) => {
+      const dragId = args[0];
+      const status = args[1] as TodoStatus;
       const dragItem = data.find(item => item.id === dragId);
       if (dragItem != null) {
         dragItem.status = status;
@@ -138,10 +84,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.column-width {
-  min-width: 320px;
-  width: 320px;
-}
-</style>

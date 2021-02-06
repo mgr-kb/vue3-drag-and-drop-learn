@@ -1,10 +1,15 @@
 <template>
-  <div class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2">
-    <p>{{ title }}</p>
+  <article
+    class="bg-gray-200 rounded-lg column-width px-2 py-4 mr-2"
+    @drop="dropEmit($event, columnType)"
+    @dragover.prevent
+    @dragenter.prevent
+  >
+    <p>{{ columnType }}</p>
     <!-- task container -->
     <ul>
       <li
-        v-for="item in data"
+        v-for="item in statusByTodos"
         :key="item.id"
         class="mt-2 bg-blue-400"
         draggable="true"
@@ -12,37 +17,48 @@
       >
         {{ item.name }}
       </li>
-      <!-- <div class="mt-2 bg-blue-400" draggable>taskA</div>
-      <div class="mt-2 bg-blue-400" draggable>taskB</div>
-      <div class="mt-2 bg-blue-400" draggable>taskC</div> -->
     </ul>
-  </div>
+  </article>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   props: {
-    title: String
+    columnType: {
+      type: String as PropType<TodoStatus>,
+      required: true
+    },
+    statusByTodos: {
+      type: Object as PropType<TodoItem>,
+      required: true
+    }
   },
-  setup() {
-    const data = reactive([
-      { id: "1", name: "TaskA", status: "Todo" },
-      { id: "2", name: "TaskB", status: "In Progree" },
-      { id: "3", name: "TaskC", status: "Done" }
-    ]);
+  emits: ["dropList"],
+  setup(_, { emit }) {
     // drag開始時のイベント処理
     const dragList = (event: DragEvent, taskId: string) => {
-      console.log(taskId);
-      // dataTransferは必ず存在すると仮定
-      event.dataTransfer!.effectAllowed = "move";
-      event.dataTransfer!.dropEffect = "move";
-      event.dataTransfer!.setData("list-id", taskId);
+      const dataTransfer = event?.dataTransfer;
+      if (!dataTransfer) {
+        return;
+      }
+      dataTransfer.effectAllowed = "move";
+      dataTransfer.dropEffect = "move";
+      dataTransfer.setData("list-id", taskId);
+    };
+    // drop時のイベント処理
+    const dropEmit = (event: DragEvent, status: string) => {
+      const dataTransfer = event?.dataTransfer;
+      if (!dataTransfer) {
+        return;
+      }
+      const dragId = dataTransfer.getData("list-id");
+      emit("dropList", dragId, status);
     };
     return {
-      data,
-      dragList
+      dragList,
+      dropEmit
     };
   }
 });
