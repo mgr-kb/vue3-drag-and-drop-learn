@@ -24,6 +24,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 
+const TASK_ID_KEY = "list-id";
+
 export default defineComponent({
   props: {
     columnType: {
@@ -45,7 +47,7 @@ export default defineComponent({
       }
       dataTransfer.effectAllowed = "move";
       dataTransfer.dropEffect = "move";
-      dataTransfer.setData("list-id", taskId);
+      dataTransfer.setData(TASK_ID_KEY, taskId);
     };
     // drop時のイベント処理
     const dropEmit = (event: DragEvent, status: string) => {
@@ -53,7 +55,7 @@ export default defineComponent({
       if (!dataTransfer) {
         return;
       }
-      const dragId = dataTransfer.getData("list-id");
+      const dragId = dataTransfer.getData(TASK_ID_KEY);
       emit("dropList", dragId, status);
     };
     return {

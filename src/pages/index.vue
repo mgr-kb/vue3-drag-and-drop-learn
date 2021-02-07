@@ -1,7 +1,7 @@
 <template>
   <main>
     <h1 class="text-indigo-500">Vue 3 Drag and Drop</h1>
-    <div class="flex justify-center">
+    <section class="flex justify-center">
       <div class="min-h-screen flex overflow-x-scroll py-12">
         <TaskColumn
           columnType="Todo"
@@ -19,7 +19,7 @@
           @dropList="dropList"
         />
       </div>
-    </div>
+    </section>
   </main>
 </template>
 
@@ -27,9 +27,6 @@
 import { defineComponent, reactive, computed } from "vue";
 import TaskColumn from "@/components/TaskColumn.vue";
 
-/**
- * dataTransferなど、nullableな値も必ずあると仮定
- */
 export default defineComponent({
   components: {
     TaskColumn
@@ -46,25 +43,15 @@ export default defineComponent({
       { id: "8", name: "TaskH", status: "InProgress" },
       { id: "9", name: "TaskI", status: "Done" }
     ]);
-    const statusIsTodo = computed(() =>
+    const statusIsTodo = computed<Item[]>(() =>
       data.filter(item => item.status === "Todo")
     );
-    const statusIsProgress = computed(() =>
+    const statusIsProgress = computed<Item[]>(() =>
       data.filter(item => item.status === "InProgress")
     );
-    const statusIsDone = computed(() =>
+    const statusIsDone = computed<Item[]>(() =>
       data.filter(item => item.status === "Done")
     );
-    // drag開始時のイベント処理
-    const dragList = (event: DragEvent, taskId: string) => {
-      const dataTransfer = event?.dataTransfer;
-      if (!dataTransfer) {
-        return;
-      }
-      dataTransfer.effectAllowed = "move";
-      dataTransfer.dropEffect = "move";
-      dataTransfer.setData("list-id", taskId);
-    };
     // drop時のイベント処理
     const dropList = (...args: [string, string]) => {
       const dragId = args[0];
@@ -78,7 +65,6 @@ export default defineComponent({
       statusIsTodo,
       statusIsProgress,
       statusIsDone,
-      dragList,
       dropList
     };
   }
